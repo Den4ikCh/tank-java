@@ -1,8 +1,8 @@
 package ru.vsu.chuprikov.tank.model;
 
 public abstract class Entity {
-    private double x;
-    private double y;
+    protected double x;
+    protected double y;
 
     public Entity(double x, double y) {
         this.x = x;
