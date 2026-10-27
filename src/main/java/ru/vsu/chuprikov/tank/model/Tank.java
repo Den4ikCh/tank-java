@@ -1,14 +1,17 @@
 package ru.vsu.chuprikov.tank.model;
 
 public class Tank extends Entity implements Movable {
+    private int health;
+    private int armor;
+    private int ammunition;
+    private int speed;
 
-    public Tank(double x, double y) {
+    public Tank(int x, int y) {
         super(x, y);
     }
 
     @Override
-    public void move(double x, double y) {
-        super.x += x;
-        super.y += y;
+    public void move(Position delta) {
+        setPosition(delta);
     }
 }
