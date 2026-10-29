@@ -16,10 +16,18 @@ public class Tank extends Entity implements Movable {
     public Tank(String id, Position position, Direction direction, int maxHealth, int armor, int ammunition, int speed) {
         super(id, position);
         this.direction = Objects.requireNonNull(direction, "direction");
-        if (maxHealth <= 0) throw new IllegalArgumentException("maxHealth должен быть > 0");
-        if (armor < 0) throw new IllegalArgumentException("armor не может быть отрицательной");
-        if (ammunition < 0) throw new IllegalArgumentException("ammunition не может быть отрицательной");
-        if (speed < 0) throw new IllegalArgumentException("speed не может быть отрицательной");
+        if (maxHealth <= 0) {
+            throw new IllegalArgumentException("maxHealth должен быть > 0");
+        }
+        if (armor < 0) {
+            throw new IllegalArgumentException("armor не может быть отрицательной");
+        }
+        if (ammunition < 0) {
+            throw new IllegalArgumentException("ammunition не может быть отрицательной");
+        }
+        if (speed < 0) {
+            throw new IllegalArgumentException("speed не может быть отрицательной");
+        }
         this.maxHealth = maxHealth;
         this.health = maxHealth;
         this.armor = armor;
@@ -73,7 +81,9 @@ public class Tank extends Entity implements Movable {
      * HP не опускается ниже нуля.
      */
     public void takeDamage(int rawDamage) {
-        if (rawDamage < 0) throw new IllegalArgumentException("Урон не может быть отрицательным");
+        if (rawDamage < 0) {
+            throw new IllegalArgumentException("Урон не может быть отрицательным");
+        }
         int actual = Math.max(1, rawDamage - armor);
         this.health = Math.max(0, this.health - actual);
     }
