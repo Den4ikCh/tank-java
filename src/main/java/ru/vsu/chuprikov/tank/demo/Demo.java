@@ -13,8 +13,8 @@ public class Demo {
         Battlefield field = new Battlefield(8, 8);
         field.addObstacle(new Obstacle("O3", new Position(5, 5), ObstacleType.WATER));
 
-        Tank t1 = new Tank("T1", new Position(0, 0), Direction.RIGHT, 30, 2, 10, 2, 5);
-        Tank t2 = new Tank("T2", new Position(7, 0), Direction.LEFT, 30, 2, 10, 2, 5);
+        Tank t1 = new LightTank("T1", new Position(0, 0), Direction.RIGHT);
+        Tank t2 = new HeavyTank("T2", new Position(7, 0), Direction.LEFT);
         field.addTank(t1);
         field.addTank(t2);
 

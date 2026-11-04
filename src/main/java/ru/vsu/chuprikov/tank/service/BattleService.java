@@ -88,7 +88,7 @@ public class BattleService {
             Position last = line.get(line.size() - 1);
             battlefield.tankAt(last).ifPresent(target -> {
                 int hpBefore = target.health();
-                target.takeDamage(shooter.damage());
+                target.takeDamage(shooter.shotDamage());
                 int dealt = hpBefore - target.health();
                 events.add(new TankDamaged(turn, target.id(), dealt, target.health()));
                 if (target.isDestroyed()) {
