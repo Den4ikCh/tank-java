@@ -12,8 +12,9 @@ public class Tank extends Entity implements Movable {
     private int ammunition;
     private final int speed;
     private Direction direction;
+    private final int damage;
 
-    public Tank(String id, Position position, Direction direction, int maxHealth, int armor, int ammunition, int speed) {
+    public Tank(String id, Position position, Direction direction, int maxHealth, int armor, int ammunition, int speed, int damage) {
         super(id, position);
         this.direction = Objects.requireNonNull(direction, "direction");
         if (maxHealth <= 0) {
@@ -33,6 +34,7 @@ public class Tank extends Entity implements Movable {
         this.armor = armor;
         this.ammunition = ammunition;
         this.speed = speed;
+        this.damage = damage;
     }
 
     public int maxHealth() {
@@ -61,6 +63,10 @@ public class Tank extends Entity implements Movable {
 
     public boolean isDestroyed() {
         return health <= 0;
+    }
+
+    public int damage() {
+        return damage;
     }
 
     /** Поворот в новое направление. */
@@ -95,6 +101,9 @@ public class Tank extends Entity implements Movable {
         }
         if (delta.x() == 0 && delta.y() == 0) {
             throw new InvalidMoveException("Сдвиг не может быть нулевым");
+        }
+        if ((Math.abs(delta.x()) + Math.abs(delta.y())) > speed) {
+            throw new InvalidMoveException("Превышение максимальной скорости");
         }
         setPosition(position().move(delta.x(), delta.y()));
     }

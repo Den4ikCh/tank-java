@@ -7,7 +7,6 @@ public class Battlefield {
     private final int height;
     private final Map<Position, Obstacle> obstacles;
     private final Map<String, Tank> tanks;
-    private final List<Shell> shells;
 
     public Battlefield(int width, int height) {
         if (width <= 0) {
@@ -20,19 +19,45 @@ public class Battlefield {
         this.height = height;
         this.obstacles = new HashMap<>();
         this.tanks = new LinkedHashMap<>(); //порядок добавления сохраняется -> порядок хода тоже сохраняется
-        this.shells = new ArrayList<>();
     }
 
     public boolean inBounds(Position p) {
         return 0 <= p.x() && p.x() < width && 0 <= p.y() && p.y() < height;
     }
 
+    /**
+     * Свободна ли клетка для танка: в границах, нет танка,
+     * нет препятствия с {@code blocksMovement}.
+     */
     public boolean isFree(Position p) {
         if (!inBounds(p)) return false;
         if (tankAt(p).isPresent()) return false;
         return obstacleAt(p)
                 .map(o -> !o.type().blocksMovement())
                 .orElse(true);
+    }
+
+    /**
+     * Клетки от {@code from} в направлении {@code dir} до первого препятствия,
+     * блокирующего линию огня, или до первого танка (включительно).
+     */
+    public List<Position> lineOfFire(Position from, Direction dir) {
+        List<Position> result = new ArrayList<>();
+        Position current = from;
+        while (true) {
+            current = current.move(dir.dx(), dir.dy());
+            if (!inBounds(current)) {
+                break;
+            }
+            result.add(current);
+            if (obstacleAt(current).map(o -> o.type().blocksLineOfFire()).orElse(false)) {
+                break;
+            }
+            if (tankAt(current).isPresent()) {
+                break;
+            }
+        }
+        return result;
     }
 
     public Optional<Tank> tankAt(Position p) {
@@ -49,12 +74,20 @@ public class Battlefield {
         return Optional.ofNullable(tanks.get(id));
     }
 
+    /**
+     * Добавляет препятствие. Клетка должна быть в границах и свободна.
+     * @throws IllegalArgumentException если позиция вне поля или занята
+     */
     public void addObstacle(Obstacle obstacle) {
         Objects.requireNonNull(obstacle, "obstacle");
         checkCell(obstacle.position());
         obstacles.put(obstacle.position(), obstacle);
     }
 
+    /**
+     * Добавляет танк. {@code id} должен быть уникален, клетка свободна.
+     * @throws IllegalArgumentException если {@code id} занят, позиция вне поля или занята
+     */
     public void addTank(Tank tank) {
         Objects.requireNonNull(tank, "tank");
         if (tanks.containsKey(tank.id())) {
@@ -80,26 +113,10 @@ public class Battlefield {
         tanks.remove(id);
     }
 
-    public void addShell(Shell shell) {
-        Objects.requireNonNull(shell, "shell");
-        if (shells.stream().anyMatch(s -> s.id().equals(shell.id()))) {
-            throw new IllegalArgumentException("Снаряд с id " + shell.id() + " уже добавлен");
-        }
-        shells.add(shell);
-    }
-
-    public void removeShellById(String id) {
-        shells.removeIf(s -> s.id().equals(id));
-    }
-
     public List<Tank> aliveTanks() {
         return tanks.values().stream().
                 filter(x -> !x.isDestroyed()).
                 toList();
-    }
-
-    public List<Shell> shells() {
-        return List.copyOf(shells);
     }
 
     public int width() {
