@@ -3,6 +3,7 @@ package ru.vsu.chuprikov.tank.service;
 import ru.vsu.chuprikov.tank.event.*;
 import ru.vsu.chuprikov.tank.exception.InvalidMoveException;
 import ru.vsu.chuprikov.tank.model.Battlefield;
+import ru.vsu.chuprikov.tank.model.Direction;
 import ru.vsu.chuprikov.tank.model.Position;
 import ru.vsu.chuprikov.tank.model.Tank;
 
@@ -61,8 +62,31 @@ public class BattleService {
     }
 
     /**
+     * Поворачивает танк в новое направление.
+     *
+     * @param tankId id танка
+     * @param newDir новое направление
+     * @return события, порождённые поворотом
+     * @throws IllegalArgumentException если танк не найден
+     * @throws IllegalStateException    если танк уничтожен
+     */
+    public List<BattleEvent> rotateTank(String tankId, Direction newDir) {
+        Tank tank = battlefield.tankById(tankId)
+                .orElseThrow(() -> new IllegalArgumentException("Танк с id " + tankId + " не найден"));
+        if (tank.isDestroyed()) {
+            throw new IllegalStateException("Танк " + tankId + " уничтожен");
+        }
+        int before = events.size();
+        turn++;
+        tank.rotate(newDir);
+        events.add(new TankRotated(turn, tankId, newDir));
+        return List.copyOf(events.subList(before, events.size()));
+    }
+
+    /**
      * Выстрел танка в текущем направлении. Мгновенный: снаряд летит
-     * до первого препятствия или танка.
+     * до первого препятствия или танка. Урон может быть критическим
+     * (20% шанс, ×2) — источник случайности {@link #random}, задан зерном.
      *
      * @param tankId id стреляющего танка
      * @return события выстрела (только новые)
@@ -85,10 +109,14 @@ public class BattleService {
 
         List<Position> line = battlefield.lineOfFire(shooter.position(), shooter.direction());
         if (!line.isEmpty()) {
-            Position last = line.get(line.size() - 1);
+            Position last = line.getLast();
             battlefield.tankAt(last).ifPresent(target -> {
+                int damage = shooter.shotDamage();
+                if (random.nextDouble() < 0.2) {
+                    damage *= 2;   // критический урон
+                }
                 int hpBefore = target.health();
-                target.takeDamage(shooter.shotDamage());
+                target.takeDamage(damage);
                 int dealt = hpBefore - target.health();
                 events.add(new TankDamaged(turn, target.id(), dealt, target.health()));
                 if (target.isDestroyed()) {
@@ -111,6 +139,6 @@ public class BattleService {
     /** id победителя, если игра окончена. */
     public Optional<String> winnerId() {
         List<Tank> alive = battlefield.aliveTanks();
-        return alive.size() == 1 ? Optional.of(alive.get(0).id()) : Optional.empty();
+        return alive.size() == 1 ? Optional.of(alive.getFirst().id()) : Optional.empty();
     }
 }

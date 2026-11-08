@@ -1,25 +1,20 @@
 package ru.vsu.chuprikov.tank.model;
 
 /**
- * Координата на сетке поля.<br>
+ * Координата на сетке поля.
  * Неизменяемое значение: {@code equals/hashCode} генерируются автоматически.
  *
- * @param x координата по горизонтали (0 — левый край)
- * @param y координата по вертикали (0 — верхний край)
+ * <p>Границы поля проверяет {@link Battlefield#inBounds(Position)}, а не сама позиция:
+ * отрицательные координаты допустимы как промежуточные значения (например,
+ * при вычислении линии огня).
+ *
+ * @param x координата по горизонтали
+ * @param y координата по вертикали
  */
-public record Position(int x, int y) { //record вместо класса для инкапсуляции, чтобы не утекло состояние
-
-    public Position(int x, int y) {
-        if (x < 0 || y < 0) {
-            throw new IllegalArgumentException(
-                    "Координаты не могут быть отрицательными: (" + x + ", " + y + ")");
-        }
-        this.x = x;
-        this.y = y;
-    }
+public record Position(int x, int y) {
 
     /**
-     * Возвращает новую позицию, сдвинутую на {@code (dx, dy)}.<br>
+     * Возвращает новую позицию, сдвинутую на {@code (dx, dy)}.
      * Исходная позиция не меняется.
      */
     public Position move(int dx, int dy) {

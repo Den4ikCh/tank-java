@@ -12,7 +12,6 @@ public class Tank extends Entity implements Movable {
     private int ammunition;
     private final int speed;
     private Direction direction;
-    private final int damage;
 
     public Tank(String id, Position position, Direction direction, int maxHealth, int armor, int ammunition, int speed) {
         super(id, position);
@@ -34,7 +33,6 @@ public class Tank extends Entity implements Movable {
         this.armor = armor;
         this.ammunition = ammunition;
         this.speed = speed;
-        this.damage = 1;
     }
 
     public int maxHealth() {
@@ -66,7 +64,7 @@ public class Tank extends Entity implements Movable {
     }
 
     public int shotDamage() {
-        return damage;
+        return 10;
     }
 
     /** Поворот в новое направление. */
