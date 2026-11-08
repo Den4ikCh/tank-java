@@ -113,7 +113,7 @@ public class BattleService {
             battlefield.tankAt(last).ifPresent(target -> {
                 int damage = shooter.shotDamage();
                 if (random.nextDouble() < 0.2) {
-                    damage *= 2;   // критический урон
+                    damage *= 2;
                 }
                 int hpBefore = target.health();
                 target.takeDamage(damage);
