@@ -153,13 +153,35 @@ class TankTests {
         BattleService s = new BattleService(f, 42L);
         List<BattleEvent> ev = s.moveTank("T1", new Position(1, 0));
         assertEquals(1, ev.size());
-        assertInstanceOf(TankMoved.class, ev.get(0));
+        assertInstanceOf(TankMoved.class, ev.getFirst());
     }
 
     @Test void service_moveTank_unknownId_throws() {
         BattleService s = new BattleService(emptyField(), 42L);
         assertThrows(IllegalArgumentException.class,
                 () -> s.moveTank("X", new Position(1, 0)));
+    }
+
+    @Test void service_rotateTank_changesDirection() {
+        Battlefield f = emptyField();
+        f.addTank(light("T1", 0, 0, Direction.RIGHT));
+        BattleService s = new BattleService(f, 42L);
+
+        List<BattleEvent> ev = s.rotateTank("T1", Direction.DOWN);
+
+        assertEquals(1, ev.size());
+        assertInstanceOf(TankRotated.class, ev.get(0));
+        assertEquals(Direction.DOWN, f.tankById("T1").orElseThrow().direction());
+    }
+
+    @Test void service_rotateTank_destroyed_throws() {
+        Battlefield f = emptyField();
+        Tank t = light("T1", 0, 0, Direction.RIGHT);
+        t.takeDamage(100);
+        f.addTank(t);
+        BattleService s = new BattleService(f, 42L);
+
+        assertThrows(IllegalStateException.class, () -> s.rotateTank("T1", Direction.UP));
     }
 
     @Test void service_fire_hitsTank() {
