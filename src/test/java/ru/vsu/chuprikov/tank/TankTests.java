@@ -204,6 +204,25 @@ class TankTests {
         assertThrows(IllegalStateException.class, () -> s.fire("T1"));
     }
 
+    @Test void service_sameSeed_sameEvents() {
+        Battlefield f1 = emptyField();
+        f1.addTank(heavy("T1", 0, 0, Direction.RIGHT));
+        f1.addTank(light("T2", 3, 0, Direction.LEFT));
+
+        Battlefield f2 = emptyField();
+        f2.addTank(heavy("T1", 0, 0, Direction.RIGHT));
+        f2.addTank(light("T2", 3, 0, Direction.LEFT));
+
+        BattleService s1 = new BattleService(f1, 42L);
+        BattleService s2 = new BattleService(f2, 42L);
+        for (int i = 0; i < 5; i++) {
+            s1.fire("T1");
+            s2.fire("T1");
+        }
+
+        assertEquals(s1.events(), s2.events());
+    }
+
     @Test void service_gameOver_oneTankAlive() {
         Battlefield f = emptyField();
         f.addTank(light("T1", 0, 0, Direction.RIGHT));
