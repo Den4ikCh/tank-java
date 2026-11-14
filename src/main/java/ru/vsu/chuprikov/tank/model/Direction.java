@@ -17,8 +17,13 @@ public enum Direction {
         this.dy = dy;
     }
 
-    public int dx() { return dx; }
-    public int dy() { return dy; }
+    public int dx() {
+        return dx;
+    }
+
+    public int dy() {
+        return dy;
+    }
 
     /** Возвращает сдвиг-позицию на один шаг в этом направлении. */
     public Position step() {

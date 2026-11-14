@@ -43,6 +43,16 @@ class TankTests {
         assertEquals(Direction.LEFT, Direction.RIGHT.opposite());
     }
 
+    @Test void direction_step_returnsVector() {
+        Position stepRight = Direction.RIGHT.step();
+        assertEquals(1, stepRight.x());
+        assertEquals(0, stepRight.y());
+
+        Position stepUp = Direction.UP.step();
+        assertEquals(0, stepUp.x());
+        assertEquals(-1, stepUp.y());
+    }
+
     @Test void direction_step() {
         assertEquals(new Position(1, 0),
                 new Position(0, 0).move(Direction.RIGHT.dx(), Direction.RIGHT.dy()));
