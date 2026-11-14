@@ -36,7 +36,7 @@ public class ConsoleRenderer {
     public String renderEvent(BattleEvent e) {
         return switch (e) {
             case TankMoved m -> "T" + m.turn() + ": " + m.tankId() + " " + m.from() + " -> " + m.to();
-            case TankRotated r -> "T" + r.turn() + ": " + r.tankId() + " повернул на " + r.direction();
+            case TankRotated r -> "T" + r.turn() + ": " + r.tankId() + " повернул башню на " + r.direction();
             case ShellFired f -> "T" + f.turn() + ": " + f.tankId() + " выстрелил (" + f.shellId() + ")";
             case TankDamaged d -> "T" + d.turn() + ": " + d.tankId() + " получил " + d.amount() + " урона, HP=" + d.remainingHp();
             case TankDestroyed d -> "T" + d.turn() + ": " + d.tankId() + " уничтожен";
