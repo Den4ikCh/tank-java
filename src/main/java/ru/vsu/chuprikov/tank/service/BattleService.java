@@ -46,7 +46,6 @@ public class BattleService {
     public List<BattleEvent> moveTank(String tankId, Position delta) throws InvalidMoveException {
         Tank tank = battlefield.tankById(tankId)
                 .orElseThrow(() -> new IllegalArgumentException("Танк с id " + tankId + " не найден"));
-
         Position from = tank.position();
         Position target = from.move(delta.x(), delta.y());
         if (!battlefield.isFree(target)) {
@@ -62,15 +61,15 @@ public class BattleService {
     }
 
     /**
-     * Поворачивает танк в новое направление.
+     * Поворачивает башню танка в новое направление.
      *
      * @param tankId id танка
-     * @param newDir новое направление
+     * @param newDir новое направление башни
      * @return события, порождённые поворотом
      * @throws IllegalArgumentException если танк не найден
      * @throws IllegalStateException    если танк уничтожен
      */
-    public List<BattleEvent> rotateTank(String tankId, Direction newDir) {
+    public List<BattleEvent> rotateTankTurret(String tankId, Direction newDir) {
         Tank tank = battlefield.tankById(tankId)
                 .orElseThrow(() -> new IllegalArgumentException("Танк с id " + tankId + " не найден"));
         if (tank.isDestroyed()) {
@@ -78,13 +77,13 @@ public class BattleService {
         }
         int before = events.size();
         turn++;
-        tank.rotate(newDir);
+        tank.rotateTurret(newDir);
         events.add(new TankRotated(turn, tankId, newDir));
         return List.copyOf(events.subList(before, events.size()));
     }
 
     /**
-     * Выстрел танка в текущем направлении. Мгновенный: снаряд летит
+     * Выстрел танка в направлении башни ({@code turretDirection}). Мгновенный: снаряд летит
      * до первого препятствия или танка. Урон может быть критическим
      * (20% шанс, ×2) — источник случайности {@link #random}, задан зерном.
      *
@@ -107,7 +106,7 @@ public class BattleService {
         String shellId = "S" + turn;
         events.add(new ShellFired(turn, tankId, shellId));
 
-        List<Position> line = battlefield.lineOfFire(shooter.position(), shooter.direction());
+        List<Position> line = battlefield.lineOfFire(shooter.position(), shooter.turretDirection());
         if (!line.isEmpty()) {
             Position last = line.getLast();
             battlefield.tankAt(last).ifPresent(target -> {

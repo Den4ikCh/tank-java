@@ -38,12 +38,12 @@ class TankTests {
         assertEquals(new Position(-1, 0), new Position(0, 0).move(-1, 0));
     }
 
-    @Test void direction_opposite() {
+    @Test void turretDirection_opposite() {
         assertEquals(Direction.DOWN, Direction.UP.opposite());
         assertEquals(Direction.LEFT, Direction.RIGHT.opposite());
     }
 
-    @Test void direction_step_returnsVector() {
+    @Test void turretDirection_step_returnsVector() {
         Position stepRight = Direction.RIGHT.step();
         assertEquals(1, stepRight.x());
         assertEquals(0, stepRight.y());
@@ -53,7 +53,7 @@ class TankTests {
         assertEquals(-1, stepUp.y());
     }
 
-    @Test void direction_step() {
+    @Test void turretDirection_step() {
         assertEquals(new Position(1, 0),
                 new Position(0, 0).move(Direction.RIGHT.dx(), Direction.RIGHT.dy()));
     }
@@ -61,7 +61,7 @@ class TankTests {
     @Test void tank_initialState() {
         Tank t = light("T1", 0, 0, Direction.RIGHT);
         assertEquals(20, t.health());
-        assertEquals(Direction.RIGHT, t.direction());
+        assertEquals(Direction.RIGHT, t.turretDirection());
         assertFalse(t.isDestroyed());
     }
 
@@ -172,26 +172,26 @@ class TankTests {
                 () -> s.moveTank("X", new Position(1, 0)));
     }
 
-    @Test void service_rotateTank_changesDirection() {
+    @Test void service_rotateTurretTank_changesTurretDirection() {
         Battlefield f = emptyField();
         f.addTank(light("T1", 0, 0, Direction.RIGHT));
         BattleService s = new BattleService(f, 42L);
 
-        List<BattleEvent> ev = s.rotateTank("T1", Direction.DOWN);
+        List<BattleEvent> ev = s.rotateTankTurret("T1", Direction.DOWN);
 
         assertEquals(1, ev.size());
         assertInstanceOf(TankRotated.class, ev.get(0));
-        assertEquals(Direction.DOWN, f.tankById("T1").orElseThrow().direction());
+        assertEquals(Direction.DOWN, f.tankById("T1").orElseThrow().turretDirection());
     }
 
-    @Test void service_rotateTank_destroyed_throws() {
+    @Test void service_rotateTurretTank_destroyed_throws() {
         Battlefield f = emptyField();
         Tank t = light("T1", 0, 0, Direction.RIGHT);
         t.takeDamage(100);
         f.addTank(t);
         BattleService s = new BattleService(f, 42L);
 
-        assertThrows(IllegalStateException.class, () -> s.rotateTank("T1", Direction.UP));
+        assertThrows(IllegalStateException.class, () -> s.rotateTankTurret("T1", Direction.UP));
     }
 
     @Test void service_fire_hitsTank() {

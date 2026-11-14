@@ -31,9 +31,9 @@ public class Demo {
         System.out.print(renderer.renderEvents(battle.moveTank("T1", new Position(1, 0))));
 
         System.out.println("--- Поворот T1 ---");
-        System.out.print(renderer.renderEvents(battle.rotateTank("T1", Direction.DOWN)));
+        System.out.print(renderer.renderEvents(battle.rotateTankTurret("T1", Direction.DOWN)));
 
-        System.out.print(renderer.renderEvents(battle.rotateTank("T1", Direction.RIGHT)));
+        System.out.print(renderer.renderEvents(battle.rotateTankTurret("T1", Direction.RIGHT)));
         System.out.println("--- Бой ---");
         while (!battle.isGameOver()) {
             try {

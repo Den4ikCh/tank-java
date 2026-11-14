@@ -11,11 +11,11 @@ public class Tank extends Entity implements Movable {
     private final int armor;
     private int ammunition;
     private final int speed;
-    private Direction direction;
+    private Direction turretDirection; // Направление башни (куда стреляем)
 
     public Tank(String id, Position position, Direction direction, int maxHealth, int armor, int ammunition, int speed) {
         super(id, position);
-        this.direction = Objects.requireNonNull(direction, "direction");
+        this.turretDirection = Objects.requireNonNull(direction, "turretDirection");
         if (maxHealth <= 0) {
             throw new IllegalArgumentException("maxHealth должен быть > 0");
         }
@@ -55,8 +55,8 @@ public class Tank extends Entity implements Movable {
         return speed;
     }
 
-    public Direction direction() {
-        return direction;
+    public Direction turretDirection() {
+        return turretDirection;
     }
 
     public boolean isDestroyed() {
@@ -67,9 +67,9 @@ public class Tank extends Entity implements Movable {
         return 10;
     }
 
-    /** Поворот в новое направление. */
-    public void rotate(Direction newDirection) {
-        this.direction = Objects.requireNonNull(newDirection, "direction");
+    /** Поворот башни в новое направление. */
+    public void rotateTurret(Direction newDirection) {
+        this.turretDirection = Objects.requireNonNull(newDirection, "turretDirection");
     }
 
     /** Уменьшает боезапас на один выстрел. */
