@@ -60,16 +60,34 @@ public class Battlefield {
         return result;
     }
 
+    /**
+     * Находит танк на указанной клетке.
+     *
+     * @param p координата на поле
+     * @return {@code Optional} с танком, если клетка занята, иначе пустой {@code Optional}
+     */
     public Optional<Tank> tankAt(Position p) {
         return tanks.values().stream()
                 .filter(t -> t.position().equals(p))
                 .findFirst();
     }
 
+    /**
+     * Возвращает препятствие в указанной клетке.
+     *
+     * @param p координата на поле
+     * @return {@code Optional} с препятствием, если оно там есть, иначе пустой {@code Optional}
+     */
     public Optional<Obstacle> obstacleAt(Position p) {
         return Optional.ofNullable(obstacles.get(p));
     }
 
+    /**
+     * Находит танк по его уникальному идентификатору.
+     *
+     * @param id идентификатор танка
+     * @return {@code Optional} с танком, если он существует, иначе пустой {@code Optional}
+     */
     public Optional<Tank> tankById(String id) {
         return Optional.ofNullable(tanks.get(id));
     }
@@ -113,6 +131,12 @@ public class Battlefield {
         tanks.remove(id);
     }
 
+    /**
+     * Возвращает список всех живых (не уничтоженных) танков на поле.
+     * Возвращаемый список является неизменяемой копией.
+     *
+     * @return список живых танков
+     */
     public List<Tank> aliveTanks() {
         return tanks.values().stream().
                 filter(x -> !x.isDestroyed()).
